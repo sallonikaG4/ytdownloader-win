@@ -59,7 +59,7 @@ YouTube to MP3 Downloader v2.0.0 for Windows
 - All Python dependencies are bundled - no need to install Python separately
 
 ### 🐛 Issues?
-Please report issues on the [Issues](https://github.com/sallonikaG4/ytdownloader-windows/issues) page.
+Please report issues on the [Issues](https://github.com/sallonikaG4/ytdownloader-win/issues) page.
 ```
 
 ## Step 4: Upload the Installer
@@ -76,11 +76,11 @@ Please report issues on the [Issues](https://github.com/sallonikaG4/ytdownloader
 ## Done! 🎉
 
 Your release is now live! Users can download the installer from:
-https://github.com/sallonikaG4/ytdownloader-windows/releases
+https://github.com/sallonikaG4/ytdownloader-win/releases
 
 ---
 
 **Quick Links:**
-- Release page: https://github.com/sallonikaG4/ytdownloader-windows/releases
-- Download installer: https://github.com/sallonikaG4/ytdownloader-windows/releases/latest (after publishing)
+- Release page: https://github.com/sallonikaG4/ytdownloader-win/releases
+- Download installer: https://github.com/sallonikaG4/ytdownloader-win/releases/latest (after publishing)
 

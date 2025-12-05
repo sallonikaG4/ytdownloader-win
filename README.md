@@ -44,7 +44,7 @@ This application provides a **local, ad-free solution** for downloading YouTube 
 
 ### Option 1: Installer (Recommended)
 
-1. Download `YouTubeToMP3_Setup.exe` from the [Releases](https://github.com/sallonikaG4/ytdownloader-windows/releases) page
+1. Download `YouTubeToMP3_Setup.exe` from the [Releases](https://github.com/sallonikaG4/ytdownloader-win/releases) page
 2. Run the installer
 3. Follow the installation wizard
 4. The installer will automatically set up FFmpeg if needed
@@ -222,8 +222,8 @@ This project is licensed under the **GNU General Public License v3.0** - see the
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/sallonikaG4/ytdownloader-windows/issues)
-- **Releases**: [GitHub Releases](https://github.com/sallonikaG4/ytdownloader-windows/releases)
+- **Issues**: [GitHub Issues](https://github.com/sallonikaG4/ytdownloader-win/issues)
+- **Releases**: [GitHub Releases](https://github.com/sallonikaG4/ytdownloader-win/releases)
 
 ---
 
