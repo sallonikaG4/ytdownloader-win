@@ -1,16 +1,22 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+import os
+
 block_cipher = None
+
+# Build datas list - include icon only if it exists
+datas = [
+    ('templates', 'templates'),
+    ('static', 'static'),
+]
+if os.path.exists('icon.ico'):
+    datas.append(('icon.ico', '.'))
 
 a = Analysis(
     ['desktop_app.py'],
     pathex=[],
     binaries=[],
-    datas=[
-        ('templates', 'templates'),
-        ('static', 'static'),
-        ('icon.ico', '.'),
-    ],
+    datas=datas,
     hiddenimports=[
         'PyQt5.QtCore',
         'PyQt5.QtGui',
@@ -52,7 +58,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon='icon.ico',
+    icon='icon.ico' if os.path.exists('icon.ico') else None,
 )
 
 

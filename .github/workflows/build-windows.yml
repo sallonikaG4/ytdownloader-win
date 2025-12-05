@@ -28,22 +28,85 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
+        if ($LASTEXITCODE -ne 0) {
+          Write-Host "ERROR: Failed to install dependencies"
+          exit 1
+        }
     
     - name: Install Inno Setup
       run: |
         $innosetupUrl = "https://files.jrsoftware.org/is/6/innosetup-6.2.2.exe"
         $innosetupInstaller = "$env:TEMP\innosetup.exe"
-        Invoke-WebRequest -Uri $innosetupUrl -OutFile $innosetupInstaller
-        Start-Process -FilePath $innosetupInstaller -ArgumentList "/VERYSILENT /SUPPRESSMSGBOXES /NORESTART" -Wait
+        Write-Host "Downloading Inno Setup..."
+        Invoke-WebRequest -Uri $innosetupUrl -OutFile $innosetupInstaller -ErrorAction Stop
+        Write-Host "Installing Inno Setup..."
+        Start-Process -FilePath $innosetupInstaller -ArgumentList "/VERYSILENT /SUPPRESSMSGBOXES /NORESTART" -Wait -NoNewWindow
+        Write-Host "Adding Inno Setup to PATH..."
         Add-Content $env:GITHUB_PATH "C:\Program Files (x86)\Inno Setup 6"
+        Write-Host "Verifying Inno Setup installation..."
+        if (Test-Path "C:\Program Files (x86)\Inno Setup 6\ISCC.exe") {
+          Write-Host "Inno Setup installed successfully"
+        } else {
+          Write-Host "ERROR: Inno Setup installation failed"
+          exit 1
+        }
+    
+    - name: Check for icon file
+      run: |
+        if (Test-Path "icon.ico") {
+          Write-Host "Icon file found: icon.ico"
+        } else {
+          Write-Host "WARNING: icon.ico not found. Building without icon."
+        }
     
     - name: Build application
       run: |
+        Write-Host "Building application with PyInstaller..."
         pyinstaller youtube_downloader.spec --clean
+        if ($LASTEXITCODE -ne 0) {
+          Write-Host "ERROR: PyInstaller build failed with exit code $LASTEXITCODE"
+          Get-Content dist\*.log -ErrorAction SilentlyContinue | Select-Object -Last 50
+          exit 1
+        }
+        if (Test-Path "dist\YouTubeToMP3.exe") {
+          Write-Host "Build successful: dist\YouTubeToMP3.exe"
+          Get-Item "dist\YouTubeToMP3.exe" | Select-Object Name, Length
+        } else {
+          Write-Host "ERROR: Executable not found after build"
+          Write-Host "Contents of dist folder:"
+          Get-ChildItem dist -ErrorAction SilentlyContinue
+          exit 1
+        }
     
     - name: Create installer
       run: |
-        "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" build_installer.iss
+        Write-Host "Creating installer with Inno Setup..."
+        $isccPath = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+        if (-not (Test-Path $isccPath)) {
+          Write-Host "ERROR: ISCC.exe not found at $isccPath"
+          Write-Host "Checking alternative locations..."
+          Get-ChildItem "C:\Program Files*" -Recurse -Filter "ISCC.exe" -ErrorAction SilentlyContinue | Select-Object FullName
+          exit 1
+        }
+        Write-Host "Using ISCC at: $isccPath"
+        & $isccPath build_installer.iss
+        if ($LASTEXITCODE -ne 0) {
+          Write-Host "ERROR: Inno Setup compilation failed with exit code $LASTEXITCODE"
+          if (Test-Path "build_installer.log") {
+            Write-Host "Inno Setup log:"
+            Get-Content "build_installer.log" -Tail 50
+          }
+          exit 1
+        }
+        if (Test-Path "dist\YouTubeToMP3_Setup.exe") {
+          Write-Host "Installer created successfully: dist\YouTubeToMP3_Setup.exe"
+          Get-Item "dist\YouTubeToMP3_Setup.exe" | Select-Object Name, Length
+        } else {
+          Write-Host "ERROR: Installer not found after compilation"
+          Write-Host "Contents of dist folder:"
+          Get-ChildItem dist -ErrorAction SilentlyContinue
+          exit 1
+        }
     
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
