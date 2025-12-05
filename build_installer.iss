@@ -21,7 +21,7 @@ AllowNoIcons=yes
 LicenseFile=
 OutputDir=dist
 OutputBaseFilename=YouTubeToMP3_Setup
-SetupIconFile=icon.ico
+; SetupIconFile=icon.ico  ; Optional - uncomment if icon.ico exists
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -36,15 +36,15 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "dist\YouTubeToMP3.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "icon.ico"; DestDir: "{app}"; Flags: ignoreversion
+; Source: "icon.ico"; DestDir: "{app}"; Flags: ignoreversion; Check: FileExists(ExpandConstant('{src}\icon.ico'))
 Source: "download_ffmpeg.ps1"; DestDir: "{tmp}"; Flags: deleteafterinstall
 ; Note: Python runtime is included in the PyInstaller bundle
 ; FFmpeg will be installed automatically during setup
 
 [Icons]
-Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\icon.ico"
+Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
-Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon; IconFilename: "{app}\icon.ico"
+Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
 ; Install FFmpeg automatically (if not already installed)
@@ -94,4 +94,9 @@ end;
 function IsFFmpegInstalled(): Boolean;
 begin
   Result := FFmpegInstalled;
+end;
+
+function FileExists(FileName: String): Boolean;
+begin
+  Result := FileExists(ExpandConstant('{src}\' + FileName));
 end;
