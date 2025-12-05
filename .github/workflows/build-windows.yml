@@ -30,9 +30,12 @@ jobs:
         pip install -r requirements.txt
     
     - name: Install Inno Setup
-      uses: ammaraskar/setup-inno-setup@v1
-      with:
-        version: '6.2.2'
+      run: |
+        $innosetupUrl = "https://files.jrsoftware.org/is/6/innosetup-6.2.2.exe"
+        $innosetupInstaller = "$env:TEMP\innosetup.exe"
+        Invoke-WebRequest -Uri $innosetupUrl -OutFile $innosetupInstaller
+        Start-Process -FilePath $innosetupInstaller -ArgumentList "/VERYSILENT /SUPPRESSMSGBOXES /NORESTART" -Wait
+        Add-Content $env:GITHUB_PATH "C:\Program Files (x86)\Inno Setup 6"
     
     - name: Build application
       run: |
