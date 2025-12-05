@@ -1,0 +1,53 @@
+name: Build Windows Application
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - '**/*.py'
+      - '**/*.spec'
+      - '**/*.iss'
+      - '.github/workflows/build-windows.yml'
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+    
+    - name: Install Inno Setup
+      uses: ammaraskar/setup-inno-setup@v1
+      with:
+        version: '6.2.2'
+    
+    - name: Build application
+      run: |
+        pyinstaller youtube_downloader.spec --clean
+    
+    - name: Create installer
+      run: |
+        "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" build_installer.iss
+    
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: Windows-Application
+        path: |
+          dist/YouTubeToMP3.exe
+          dist/YouTubeToMP3_Setup.exe
+        retention-days: 30
+
